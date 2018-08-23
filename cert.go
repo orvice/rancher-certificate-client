@@ -32,8 +32,11 @@ func (c *Client) CertGet(cert Cert) (*rc.Certificate, error) {
 	if err != nil {
 		return nil, err
 	}
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode == http.StatusNotFound {
 		return nil, NotFound
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, ReqFail
 	}
 
 	defer resp.Body.Close()
