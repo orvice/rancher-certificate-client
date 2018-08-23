@@ -14,15 +14,16 @@ var (
 )
 
 type Cert struct {
-	Name      string
-	Key, Cert string
+	Name  string `json:"name"`
+	Key   string `json:"key"`
+	Certs string `json:"certs"`
 }
 
 func (c Cert) ToCertificate() rc.Certificate {
 	return rc.Certificate{
 		Name: c.Name,
 		Key:  c.Key,
-		Cert: c.Cert,
+		Cert: c.Certs,
 	}
 }
 
@@ -52,7 +53,7 @@ func (c *Client) CertGet(cert Cert) (*rc.Certificate, error) {
 
 func (c *Client) CertUpdate(cert Cert) error {
 	path := c.getCertResPathByName(cert.Name)
-	resp, err := c.doReq(http.MethodPut, path, cert.ToCertificate())
+	resp, err := c.doReq(http.MethodPut, path, cert)
 	if err != nil {
 		return err
 	}
@@ -64,11 +65,11 @@ func (c *Client) CertUpdate(cert Cert) error {
 
 func (c *Client) CertAdd(cert Cert) error {
 	path := c.getCertResPath()
-	resp, err := c.doReq(http.MethodPost, path, cert.ToCertificate())
+	resp, err := c.doReq(http.MethodPost, path, cert)
 	if err != nil {
 		return err
 	}
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusCreated {
 		return ReqFail
 	}
 	return nil
