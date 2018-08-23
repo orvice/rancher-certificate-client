@@ -40,7 +40,7 @@ func NewClient(config *Config) (*Client, error) {
 	cli.rancherClient = rancherClient
 
 	cli.httpClient = http.DefaultClient
-	var project *rc.Project
+
 	projects, err := cli.rancherClient.Project.List(&rc.ListOpts{})
 	if err != nil {
 		return nil, err
@@ -48,14 +48,13 @@ func NewClient(config *Config) (*Client, error) {
 
 	for _, v := range projects.Data {
 		if v.Name == cli.config.ProjectName {
-			project = &v
+			cli.projectID = v.Id
 		}
 	}
 
-	if project == nil {
+	if len(cli.projectID) == 0 {
 		return nil, NotFound
 	}
-	cli.projectID = project.Id
 	cli.SetNamePrefix()
 
 	return cli, nil
