@@ -56,6 +56,7 @@ func NewClient(config *Config) (*Client, error) {
 		return nil, NotFound
 	}
 	cli.projectID = project.Id
+	cli.SetNamePrefix()
 
 	return cli, nil
 }
